@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Streamerific | Video Randomizer Help</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://streamerific.com/assets/css/main.css">
+  <link rel="stylesheet" href="https://streamerific.com/assets/css/theme.css">
+  <link rel="shortcut icon" type="image/x-icon" href="https://streamerific.com/assets/images/favicon.png">
+</head>
+<body class="pt-0">
+  <div class="site-content">
+    <div class="container">
+      <h1>Video Randomizer v2.0 Setup</h1>
+
+      <p>Welcome to the <a href="https://streamerific.com/video-randomizer" target="_blank">Streamerific Video Randomizer</a>! This <em>browser source</em> allows you to have a randomly selected video play when you <em>switch to a scene</em> or <em>make the browser source visible</em> in OBS, Streamlabs OBS, or other streaming software. Using the options below you can customize the behavior of the randomizer to suit your needs.</p>
+
+      <p>If you have any questions or have trouble getting it to work please contact <a href="https://twitter.com/TheRealDarthGuy" target="_blank">Chris "TheRealDarthGuy" on Twitter</a>.</p>
+
+      <hr class="my-5">
+
+      <form method="get" action="play.html">
+        <h2>Options</h2>
+
+        <p class="text-danger">Setting <em>play all videos</em> and/or <em>Loop once complete</em> options to "yes" will require you to either <em>hide the source</em> or <em>switch to another scene</em> to halt video playback.</p>
+
+        <div class="form-group">
+          <label for="randomize" class="pr-3"><strong>Randomize videos?</strong></label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="randomize" id="randomize2" value="yes" checked>
+            <label class="form-check-label" for="randomize2">Yes</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="randomize" id="randomize1" value="no">
+            <label class="form-check-label" for="randomize1">No</label>
+          </div>
+          <p>This option will randomize all videos provided.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="all" class="pr-3"><strong>Play all videos?</strong></label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="all" id="all1" value="no" checked>
+            <label class="form-check-label" for="all1">No</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="all" id="all2" value="yes">
+            <label class="form-check-label" for="all2">Yes</label>
+          </div>
+          <p>This option will play through all videos provided.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="loop" class="pr-3"><strong>Loop once complete?</strong></label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="loop" id="loop1" value="no" checked>
+            <label class="form-check-label" for="loop1">No</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="loop" id="loop2" value="yes">
+            <label class="form-check-label" for="loop2">Yes</label>
+          </div>
+          <p class="mb-0">This option will loop through the video(s) after playback completes.</p>
+          <ul>
+            <li>If you have "all" set to "yes" then playback will start over and loop through the collection again.</li>
+            <li>If you set "all" to "no" then a single video will loop forever.</li>
+          </ul>
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="preventRepeat" class="pr-3"><strong>Prevent repeats?</strong></label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="preventRepeat" id="preventRepeat1" value="no" checked>
+            <label class="form-check-label" for="preventRepeat1">No</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="preventRepeat" id="preventRepeat2" value="yes">
+            <label class="form-check-label" for="all2">Yes</label>
+          </div>
+          <p>This option will attempt to prevent videos from repeating when the source is hidden then shown again. <em>Please note: this uses the browser source <code>localStorage</code> and therefor may not work.</em></p>
+        </div>
+
+        <input class="btn btn-success" type="submit" value="Submit">
+      </form>
+
+      <hr class="my-5">
+
+      <h2>Video List Formatter</h2>
+
+      <form onsubmit="return getListText();">
+        <div class="form-group">
+          <p>This formatter is intended to assist you in creating the <code>code</code> that you will need to paste into the adjacent file <code>play.html</code> in order to get the video randomizer to work properly. If you feel comfortable in <code>JavaScript</code> you can certainly work with it directly.</p>
+          <p>Please follow the instructions in the <a href="https://streamerific.com/video-randomizer">tutorial video</a> to lean how to use this feature.</p>
+          <textarea class="form-control" id="videoList" name="videoList" rows="10"></textarea>
+        </div>
+
+        <input class="btn btn-primary" type="submit" value="Reformat List">
+      </form>
+    </div>
+
+    <footer class="bg-white border-top p-3 text-muted small">
+      <div class="container">
+        <div class="row align-items-center justify-content-between">
+          <div>
+            <span class="navbar-brand mr-2 mb-0"><strong><a href="https://streamerific.com" target="_blank">Streamerific</a></strong> &bull; Web Tools for Streamers and Content Creators</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function getListText() {
+      try {
+        var textarea = document.getElementById('videoList');
+
+        var temp = textarea.value;
+        temp = temp
+          .split("\n")
+          .map(function(s) {
+            return s
+              .replace(/\\/g, "\\\\")
+              .replace(/"/g, "\"")
+              .replace(/\s/gm, '%20');
+          })
+          .toString();
+        textarea.value = temp;
+      } catch(e) {
+        console.error(e)
+      }
+
+      return false;
+    }
+  </script>
+</body>
+</html>
